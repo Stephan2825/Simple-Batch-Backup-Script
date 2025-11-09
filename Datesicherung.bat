@@ -1,8 +1,6 @@
 @echo off
 title Datensicherung
 
-
-
 :hauptmenu
 cls
 echo.
@@ -14,119 +12,59 @@ echo 2. Datensicherung Inkrementell
 echo 3. Datensicherung Differenziell
 echo 4. Beenden
 echo.
-set /p menu= Option waehlen:
+set /p menu=Option waehlen: 
 echo.
-if %menu% == 1 goto Datensicherungkomplett
-if %menu% == 2 goto DatensicherungInkrementell
-if %menu% == 3 goto DatensicherungDifferenziell
-if %menu% == 4 goto Beenden
 
+if "%menu%"=="1" goto DatensicherungKomplett
+if "%menu%"=="2" goto DatensicherungInkrementell
+if "%menu%"=="3" goto DatensicherungDifferenziell
+if "%menu%"=="4" goto Beenden
+goto hauptmenu
 
-
-
-
-
-:Datensicherungkomplett
+:DatensicherungKomplett
 cls
-
 echo ***************************
 echo * Datensicherung komplett *
 echo ***************************
 
-echo Welches Laufwerk soll gesichert werden? 
-echo.
-echo.
-set /p LaufwerkQuelle= Quelllaufwerk angeben:
+set /p LaufwerkQuelle=Quelllaufwerk angeben (z.B. C:\Ordner):
+set /p LaufwerkZiel=Ziellaufwerk angeben (z.B. D:\Backup):
 
-rem md %LaufwerkQuelle%:\Datensicherung\%date%
-echo.
-echo.
-set /p LaufwerkZiel= Ziellaufwerk angeben:
-xcopy %LaufwerkQuelle%:\*.* %LaufwerkZiel%:\Datensicherung+k\*.* /s /e
-echo.
-if errorlevel == 1 (goto fehler)
-if errorlevel == 0 (goto erfolgreich)
-pause
-
-:fehler
-echo Fehler bei der Datensicherung.
-pause
-goto hauptmenu
-:erfolgreich
-echo Datensicherung war erfolgreich
-echo.
-pause
-goto hauptmenu
-
+xcopy "%LaufwerkQuelle%\*" "%LaufwerkZiel%\Datensicherung_komplett\" /s /e /y
+goto Ergebnis
 
 :DatensicherungInkrementell
 cls
-
 echo *******************************
 echo * Datensicherung Inkrementell *
 echo *******************************
 
-echo Welches Laufwerk soll gesichert werden? 
-echo.
-echo.
-set /p LaufwerkQuelle= Quelllaufwerk angeben:
+set /p LaufwerkQuelle=Quelllaufwerk angeben (z.B. C:\Ordner):
+set /p LaufwerkZiel=Ziellaufwerk angeben (z.B. D:\Backup):
 
-rem md %LaufwerkQuelle%:\Datensicherung\%date%
-echo.
-echo.
-set /p LaufwerkZiel= Ziellaufwerk angeben:
-xcopy %LaufwerkQuelle%:\*.* %LaufwerkZiel%:\Datensicherung+i\*.* /e /m /s
-echo.
-if errorlevel == 1 (goto fehler)
-if errorlevel == 0 (goto erfolgreich)
-echo.
-pause
-goto hauptmenu
-
-:fehler
-echo Fehler bei der Datensicherung.
-pause
-goto hauptmenu
-:erfolgreich
-echo Datensicherung war erfolgreich
-pause
-goto hauptmenu
-
+xcopy "%LaufwerkQuelle%\*" "%LaufwerkZiel%\Datensicherung_inkrementell\" /s /e /m /y
+goto Ergebnis
 
 :DatensicherungDifferenziell
 cls
-
 echo ********************************
 echo * Datensicherung Differenziell *
 echo ********************************
 
-echo Welches Laufwerk soll gesichert werden? 
-echo.
-echo.
-set /p LaufwerkQuelle= Quelllaufwerk angeben:
+set /p LaufwerkQuelle=Quelllaufwerk angeben (z.B. C:\Ordner):
+set /p LaufwerkZiel=Ziellaufwerk angeben (z.B. D:\Backup):
 
-rem md %LaufwerkQuelle%:\Datensicherung\%date%
-echo.
-echo.
-set /p LaufwerkZiel= Ziellaufwerk angeben:
-xcopy %LaufwerkQuelle%:\*.* %LaufwerkZiel%:\Datensicherung+d\*.* /e /a /s /e
-echo.
-if errorlevel == 1 (goto fehler)
-if errorlevel == 0 (goto erfolgreich)
-echo.
+xcopy "%LaufwerkQuelle%\*" "%LaufwerkZiel%\Datensicherung_differenziell\" /s /e /a /y
+goto Ergebnis
+
+:Ergebnis
+if errorlevel 1 (
+    echo Fehler bei der Datensicherung.
+) else (
+    echo Datensicherung war erfolgreich.
+)
 pause
 goto hauptmenu
-
-:fehler
-echo Fehler bei der Datensicherung.
-pause
-goto hauptmenu
-:erfolgreich
-echo Datensicherung war erfolgreich
-pause
-goto hauptmenu
-
 
 :Beenden
 exit
-
